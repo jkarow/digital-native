@@ -6,7 +6,7 @@ Each primary is chosen from a dataset consisting of extrapolated virtual primari
 
 ![](https://user-images.githubusercontent.com/66244111/277140183-9dae451c-0de9-46c7-b88e-b6be8da7a542.png)
 
-This is very much brute-force. There's no rotational scaling or correction.
+This is very much brute-force. There's no rotational scaling or correction, and it relies on general similarity.
 
 ## Matrices
 
