@@ -4,7 +4,7 @@ An experimental set of primaries aiming for the ideal oxymoron of camera-agnosti
 
 Each primary is chosen from a dataset consisting of extrapolated virtual primaries from cameras with known matrices.
 
-![](https://user-images.githubusercontent.com/66244111/277139966-22c42f5b-ca9e-470a-afac-3fdea2b3a455.png)
+![](https://user-images.githubusercontent.com/66244111/277140183-9dae451c-0de9-46c7-b88e-b6be8da7a542.png)
 
 ## Matrices
 
