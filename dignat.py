@@ -15,6 +15,8 @@ class Camera:
         # Sensor to storage primaries matrix.
         cam.matrix = matrix
 
+# Currently problematic:
+# - Sony A7SIII
 CAMERA_MATRICES = [
     Camera("ARRI Alexa", "Alexa Wide Gamut", np.array([[1.16568936, -0.18400079, 0.01831143], [-0.0524356, 1.01472615, 0.03770945], [0.0270692, -0.24782896, 1.22075976]])),
     Camera("Canon EOS R3", "ITU-R BT.709", np.array([[2.02, -1.15, 0.14], [-0.17, 1.52, -0.36], [0.05, -0.55, 1.5]])),
