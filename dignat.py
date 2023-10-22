@@ -37,7 +37,7 @@ CAMERA_MATRICES = [
     Camera("Sony A7SIII", "ITU-R BT.709", np.array([[1.9, -0.71, -0.19], [-0.17, 1.47, -0.3], [0.13, -0.85, 1.72]])),
 ]
 
-def space_from_camera_matrix(cam):
+def derive_camera_space(cam):
     if cam.target == None:
         npm = cam.matrix
     else:
@@ -47,7 +47,7 @@ def space_from_camera_matrix(cam):
     primaries, whitepoint = colour.primaries_whitepoint(npm)
     return colour.RGB_Colourspace(cam.name, primaries, whitepoint)
 
-def space_from_farthest_primaries(spaces, whitepoint, name):
+def farthest_primaries(spaces, whitepoint, name):
     primaries = [[0.0, 0.0], [0.0, 0.0], [0.0, 0.0]]
     dists = [0.0, 0.0, 0.0]
 
@@ -59,7 +59,7 @@ def space_from_farthest_primaries(spaces, whitepoint, name):
                 dists[i] = dist
     return colour.RGB_Colourspace(name, primaries, whitepoint)
 
-def space_from_average_primaries(spaces, whitepoint, name):
+def average_primaries(spaces, whitepoint, name):
     sum = np.zeros((3, 2))
 
     for space in spaces:
@@ -79,9 +79,9 @@ def format_matrix_plaintext(mat, precision = 8):
 def main():
     camera_spaces = []
     for camera in CAMERA_MATRICES:
-        camera_spaces.append(space_from_camera_matrix(camera))
+        camera_spaces.append(derive_camera_space(camera))
 
-    dignat = space_from_average_primaries(camera_spaces, DIGNAT_WHITEPOINT, "Digital Native")
+    dignat = average_primaries(camera_spaces, DIGNAT_WHITEPOINT, "Digital Native")
     dignat.use_derived_transformation_matrices()
 
     print("Digital Native to XYZ:")
