@@ -2,19 +2,21 @@ import colour
 import matplotlib.pyplot as plt
 import numpy as np
 
-# plt.style.use("dark_background")
+DIGNAT_WHITEPOINT = colour.CCS_ILLUMINANTS["CIE 1931 2 Degree Standard Observer"]["D65"]
+PRECISION = 8
+PLOT_REF = [
+    # "Alexa Wide Gamut",
+    # "ITU-R BT.709",
+]
+DARK_PLOT = True
 
 class Camera:
-    def __init__(cam, name, storage, matrix):
-        # Camera name.
+    def __init__(cam, name, target, matrix):
         cam.name = name
-
-        # Storage (or at least matrix target) primaries.
-        cam.storage = storage
-
-        # Sensor to storage primaries matrix.
+        cam.target = target
         cam.matrix = matrix
 
+# Sensor native to target matrices.
 # Currently problematic:
 # - Sony A7SIII
 CAMERA_MATRICES = [
@@ -32,47 +34,57 @@ CAMERA_MATRICES = [
     Camera("Sony A7R V", "ITU-R BT.709", np.array([[1.95, -0.87, -0.08], [-0.15, 1.58, -0.43], [0.03, -0.45, 1.41]])),
 ]
 
-CAMERA_SPACES = []
-
-for cam in CAMERA_MATRICES:
-    if cam.storage == None:
+def space_from_camera_matrix(cam):
+    if cam.target == None:
         npm = cam.matrix
     else:
-        storage_npm = colour.RGB_COLOURSPACES[cam.storage].matrix_RGB_to_XYZ
-        npm = np.matmul(storage_npm, cam.matrix)
+        target_npm = colour.RGB_COLOURSPACES[cam.target].matrix_RGB_to_XYZ
+        npm = np.matmul(target_npm, cam.matrix)
 
     primaries, whitepoint = colour.primaries_whitepoint(npm)
-    space = colour.RGB_Colourspace(cam.name, primaries, whitepoint)
-    CAMERA_SPACES.append(space)
+    return colour.RGB_Colourspace(cam.name, primaries, whitepoint)
 
-dignat_whitepoint = colour.CCS_ILLUMINANTS["CIE 1931 2 Degree Standard Observer"]["D65"]
-dignat_primaries = [
-    [0.0, 0.0],
-    [0.0, 0.0],
-    [0.0, 0.0],
-]
+def space_from_farthest_primaries(spaces, whitepoint, name):
+    primaries = [[0.0, 0.0], [0.0, 0.0], [0.0, 0.0]]
+    dists = [0.0, 0.0, 0.0]
 
-dists = [0.0, 0.0, 0.0]
+    for space in spaces:
+        for i in range(0, 3):
+            dist = np.linalg.norm(space.primaries[i] - whitepoint)
+            if dist > dists[i]:
+                primaries[i] = space.primaries[i]
+                dists[i] = dist
+    return colour.RGB_Colourspace(name, primaries, whitepoint)
 
-for space in CAMERA_SPACES:
-    for i in range(0, 3):
-        dist = np.linalg.norm(space.primaries[i] - dignat_whitepoint)
-        if dist > dists[i]:
-            dignat_primaries[i] = space.primaries[i]
-            dists[i] = dist
+def format_matrix_plaintext(mat, precision = 8):
+    mat = np.round(mat, precision)
+    return f"""\
+{mat[0][0]} {mat[0][1]} {mat[0][2]}
+{mat[1][0]} {mat[1][1]} {mat[1][2]}
+{mat[2][0]} {mat[2][1]} {mat[2][2]}"""
 
-dignat = colour.RGB_Colourspace("Digital Native", dignat_primaries, dignat_whitepoint)
-dignat.use_derived_transformation_matrices()
+def main():
+    camera_spaces = []
+    for camera in CAMERA_MATRICES:
+        camera_spaces.append(space_from_camera_matrix(camera))
 
-print("Digital Native to XYZ:\n", dignat.matrix_RGB_to_XYZ)
-print("XYZ to Digital Native:\n", dignat.matrix_XYZ_to_RGB)
+    dignat = space_from_farthest_primaries(camera_spaces, DIGNAT_WHITEPOINT, "Digital Native")
+    dignat.use_derived_transformation_matrices()
 
-plot_ref = [
-    "Alexa Wide Gamut",
-    # "ITU-R BT.709",
-]
+    print("Digital Native to XYZ:")
+    print(format_matrix_plaintext(dignat.matrix_RGB_to_XYZ, PRECISION))
+    print("XYZ to Digital Native:")
+    print(format_matrix_plaintext(dignat.matrix_XYZ_to_RGB, PRECISION))
 
-figure, axes = colour.plotting.plot_RGB_colourspaces_in_chromaticity_diagram_CIE1931(CAMERA_SPACES + [dignat] + plot_ref, standalone = False)
-axes.legend(bbox_to_anchor=(1.02, 1.01))
-plt.title("Digital Native Comparison")
-plt.show()
+    if DARK_PLOT:
+        plt.style.use("dark_background")
+
+    figure, axes = colour.plotting.plot_RGB_colourspaces_in_chromaticity_diagram_CIE1931(
+        camera_spaces + [dignat] + PLOT_REF,
+        standalone = False
+    )
+    axes.legend(bbox_to_anchor=(1.02, 1.01))
+    plt.title("Digital Native Comparison")
+    plt.show()
+
+main()
