@@ -2,7 +2,9 @@
 
 An experimental set of primaries aiming for the ideal oxymoron of camera-agnostic camera native.
 
-Each primary is chosen from a dataset consisting of extrapolated virtual primaries from many cameras with known matrices.
+Each primary is chosen from a dataset consisting of extrapolated virtual primaries from cameras with known matrices.
+
+![](https://user-images.githubusercontent.com/66244111/277139966-22c42f5b-ca9e-470a-afac-3fdea2b3a455.png)
 
 ## Matrices
 

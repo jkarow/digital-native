@@ -70,7 +70,7 @@ plot_ref = [
     # "ITU-R BT.709",
 ]
 
-figure, axes = colour.plotting.plot_RGB_colourspaces_in_chromaticity_diagram_CIE1931(CAMERA_SPACES + [dignat] + plot_ref)
+figure, axes = colour.plotting.plot_RGB_colourspaces_in_chromaticity_diagram_CIE1931(CAMERA_SPACES + [dignat] + plot_ref, standalone = False)
 axes.legend(bbox_to_anchor=(1.02, 1.01))
 plt.title("Digital Native Comparison")
 plt.show()
