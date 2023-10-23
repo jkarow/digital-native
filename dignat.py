@@ -4,11 +4,11 @@ import numpy as np
 
 DIGNAT_WHITEPOINT = colour.CCS_ILLUMINANTS["CIE 1931 2 Degree Standard Observer"]["D65"]
 PRECISION = 8
+DARK_PLOT = True
 PLOT_REF = [
     # "Alexa Wide Gamut",
     # "ITU-R BT.709",
 ]
-DARK_PLOT = True
 
 class Camera:
     def __init__(cam, name, target, matrix):
@@ -35,10 +35,16 @@ CAMERA_MATRICES = [
     Camera("Panasonic Lumix DC-S5", "ITU-R BT.709", np.array([[1.94, -0.85, -0.09], [-0.17, 1.55, -0.38], [0.07, -0.63, 1.56]])),
     Camera("Pentax 645Z", "ITU-R BT.709", np.array([[1.87, -0.81, -0.06], [-0.16, 1.56, -0.4], [0.09, -0.59, 1.5]])),
     Camera("Pentax K-1", "ITU-R BT.709", np.array([[1.8, -0.67, -0.13], [-0.15, 1.54, -0.39], [0.07, -0.47, 1.4]])),
+
+    # "REDWideGamutRGB (RWG) is a camera color space designed to encompass all colors a RED camera can
+    #  generate without clipping. Essentially RWG is a standardized CameraRGB color space."
+    # https://s3.amazonaws.com/red_3/downloads/other/white-papers/REDWIDEGAMUTRGB%20AND%20LOG3G10%20Rev-B.pdf
+    Camera("RED Generic", None, np.array([[0.638008, 0.214704, 0.097744], [0.291954, 0.823841, -0.115795], [0.002798, -0.067034,  1.153294]])),
+
     Camera("Sony A7", "ITU-R BT.709", np.array([[1.93, -0.79, -0.14], [-0.16, 1.59, -0.43], [0.03, -0.44, 1.41]])),
-    Camera("Sony A7C", "ITU-R BT.709", np.array([[1.9, -0.73, -0.17], [-0.17, 1.46, -0.29], [0.13, -0.8, 1.67]])),
+    # Camera("Sony A7C", "ITU-R BT.709", np.array([[1.9, -0.73, -0.17], [-0.17, 1.46, -0.29], [0.13, -0.8, 1.67]])),
     Camera("Sony A7R V", "ITU-R BT.709", np.array([[1.95, -0.87, -0.08], [-0.15, 1.58, -0.43], [0.03, -0.45, 1.41]])),
-    Camera("Sony A7S III", "ITU-R BT.709", np.array([[1.9, -0.71, -0.19], [-0.17, 1.47, -0.3], [0.13, -0.85, 1.72]])),
+    # Camera("Sony A7S III", "ITU-R BT.709", np.array([[1.9, -0.71, -0.19], [-0.17, 1.47, -0.3], [0.13, -0.85, 1.72]])),
     Camera("Sony A7R III", "ITU-R BT.709", np.array([[2.01, -0.91, -0.11], [-0.18, 1.57, -0.39], [0.04, -0.52, 1.48]])),
 ]
 
@@ -89,7 +95,7 @@ def main():
     for i in range(0, len(CAMERA_MATRICES)):
         camera_spaces[i] = derive_camera_space(CAMERA_MATRICES[i])
 
-    dignat = average_primaries(camera_spaces, DIGNAT_WHITEPOINT, "Digital Native")
+    dignat = farthest_primaries(camera_spaces, DIGNAT_WHITEPOINT, "Digital Native")
     dignat.use_derived_transformation_matrices()
 
     print("Digital Native primaries:")
