@@ -4,7 +4,7 @@ import numpy as np
 
 DIGNAT_WHITEPOINT = colour.CCS_ILLUMINANTS["CIE 1931 2 Degree Standard Observer"]["D65"]
 PRECISION = 8
-DARK_PLOT = True
+DARK_PLOT = False
 PLOT_REF = [
     # "Alexa Wide Gamut",
     # "ITU-R BT.709",
@@ -39,7 +39,7 @@ CAMERA_MATRICES = [
     # "REDWideGamutRGB (RWG) is a camera color space designed to encompass all colors a RED camera can
     #  generate without clipping. Essentially RWG is a standardized CameraRGB color space."
     # https://s3.amazonaws.com/red_3/downloads/other/white-papers/REDWIDEGAMUTRGB%20AND%20LOG3G10%20Rev-B.pdf
-    Camera("RED Generic", None, np.array([[0.638008, 0.214704, 0.097744], [0.291954, 0.823841, -0.115795], [0.002798, -0.067034,  1.153294]])),
+    Camera("RED Generic", None, np.array([[0.735275, 0.068609, 0.146571], [0.286694, 0.842979, -0.129673], [-0.079681, -0.347343, 1.516082]])),
 
     Camera("Sony A7", "ITU-R BT.709", np.array([[1.93, -0.79, -0.14], [-0.16, 1.59, -0.43], [0.03, -0.44, 1.41]])),
     # Camera("Sony A7C", "ITU-R BT.709", np.array([[1.9, -0.73, -0.17], [-0.17, 1.46, -0.29], [0.13, -0.8, 1.67]])),
