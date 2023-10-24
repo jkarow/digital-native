@@ -2,6 +2,7 @@ import colour
 import matplotlib.pyplot as plt
 import numpy as np
 
+PRIMARIES_INSET = 0.2
 DIGNAT_WHITEPOINT = colour.CCS_ILLUMINANTS["CIE 1931 2 Degree Standard Observer"]["D65"]
 PRECISION = 8
 DARK_PLOT = False
@@ -39,20 +40,19 @@ CAMERA_MATRICES = [
     Camera("Pentax K-1", "ITU-R BT.709", np.array([[1.8, -0.67, -0.13], [-0.15, 1.54, -0.39], [0.07, -0.47, 1.4]])),
     Camera("Phase One P65 Plus", "ITU-R BT.709", np.array([[2.52, -1.56, 0.04], [-0.3, 1.84, -0.54], [-0.14, -0.41, 1.55]])),
 
-
     # "REDWideGamutRGB (RWG) is a camera color space designed to encompass all colors a RED camera can
     #  generate without clipping. Essentially RWG is a standardized CameraRGB color space."
     # https://s3.amazonaws.com/red_3/downloads/other/white-papers/REDWIDEGAMUTRGB%20AND%20LOG3G10%20Rev-B.pdf
     # This works and is good for comparison, however the artificial red primary is rotated exceptionally far,
     # hence why it's not used.
-    # Camera("RED Generic", None, np.array([[0.735275, 0.068609, 0.146571], [0.286694, 0.842979, -0.129673], [-0.079681, -0.347343, 1.516082]])),
+    Camera("RED Generic", None, np.array([[0.735275, 0.068609, 0.146571], [0.286694, 0.842979, -0.129673], [-0.079681, -0.347343, 1.516082]])),
 
     Camera("Sony A7", "ITU-R BT.709", np.array([[1.93, -0.79, -0.14], [-0.16, 1.59, -0.43], [0.03, -0.44, 1.41]])),
-    # Camera("Sony A7C", "ITU-R BT.709", np.array([[1.9, -0.73, -0.17], [-0.17, 1.46, -0.29], [0.13, -0.8, 1.67]])),
+    Camera("Sony A7C", "ITU-R BT.709", np.array([[1.9, -0.73, -0.17], [-0.17, 1.46, -0.29], [0.13, -0.8, 1.67]])),
     Camera("Sony A7R V", "ITU-R BT.709", np.array([[1.95, -0.87, -0.08], [-0.15, 1.58, -0.43], [0.03, -0.45, 1.41]])),
     Camera("Sony A7R III", "ITU-R BT.709", np.array([[2.01, -0.91, -0.11], [-0.18, 1.57, -0.39], [0.04, -0.52, 1.48]])),
     Camera("Sony A7S", "ITU-R BT.709", np.array([[2.29, -1.1, -0.2], [-0.25, 1.71, -0.46], [0.12, -0.7, 1.58]])),
-    # Camera("Sony A7S III", "ITU-R BT.709", np.array([[1.9, -0.71, -0.19], [-0.17, 1.47, -0.3], [0.13, -0.85, 1.72]])),
+    Camera("Sony A7S III", "ITU-R BT.709", np.array([[1.9, -0.71, -0.19], [-0.17, 1.47, -0.3], [0.13, -0.85, 1.72]])),
 ]
 
 def make_vec(length):
@@ -68,7 +68,7 @@ def derive_camera_space(cam):
     primaries, whitepoint = colour.primaries_whitepoint(npm)
     return colour.RGB_Colourspace(cam.name, primaries, whitepoint)
 
-def farthest_primaries(spaces, whitepoint, name):
+def farthest_primaries_space(spaces, whitepoint, name):
     primaries = np.zeros((3, 2))
     dists = np.zeros(3)
 
@@ -80,7 +80,7 @@ def farthest_primaries(spaces, whitepoint, name):
                 dists[i] = dist
     return colour.RGB_Colourspace(name, primaries, whitepoint)
 
-def average_primaries(spaces, whitepoint, name):
+def average_primaries_space(spaces, whitepoint, name):
     sum = np.zeros((3, 2))
 
     for space in spaces:
@@ -89,6 +89,10 @@ def average_primaries(spaces, whitepoint, name):
     primaries = sum / len(spaces)
 
     return colour.RGB_Colourspace(name, primaries, whitepoint)
+
+def inset_primaries(primaries, whitepoint, amount):
+    factor = 1.0 / (1.0 - amount)
+    return (primaries - whitepoint) * factor + whitepoint
 
 def format_matrix_plaintext(mat, precision = 8):
     mat = np.round(mat, precision)
@@ -102,7 +106,8 @@ def main():
     for i in range(0, len(CAMERA_MATRICES)):
         camera_spaces[i] = derive_camera_space(CAMERA_MATRICES[i])
 
-    dignat = farthest_primaries(camera_spaces, DIGNAT_WHITEPOINT, "Digital Native")
+    dignat = average_primaries_space(camera_spaces, DIGNAT_WHITEPOINT, "Digital Native")
+    dignat.primaries = inset_primaries(dignat.primaries, DIGNAT_WHITEPOINT, PRIMARIES_INSET)
     dignat.use_derived_transformation_matrices()
 
     print("Digital Native primaries:")
