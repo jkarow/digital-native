@@ -52,7 +52,7 @@ del color_matrix_txt
 
 dignat_primaries = np.array([
     [0.948, 0.186],
-    [0.166, 1.625],
+    [0.124, 1.785],
     [-0.041, -0.305],
 ])
 dignat_whitepoint = colour.CCS_ILLUMINANTS["CIE 1931 2 Degree Standard Observer"]["D65"]

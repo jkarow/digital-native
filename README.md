@@ -2,14 +2,19 @@
 
 An experimental set of primaries aiming for the ideal oxymoron of a camera-agnostic camera native space.
 
-Each primary is chosen from a dataset consisting of extrapolated virtual primaries from cameras with known matrices.
-
-![](https://user-images.githubusercontent.com/66244111/277140183-9dae451c-0de9-46c7-b88e-b6be8da7a542.png)
 ![](https://user-images.githubusercontent.com/66244111/277839781-3b2a9a0d-723e-42ad-b3fb-b6d64663b5c5.png)
 
-This is very much brute-force. There's no rotational scaling or correction, and it relies on general similarity.
+Each primary is chosen either directly from or fitted to a dataset of virtual primaries extrapolated from known camera matrices. This is very much brute-force.
+
+The source files are of the form:
+
+```
+dignat-DATASET-FIT_METHOD.py
+```
 
 ## Matrices
+
+Old don't use.
 
 DigNat to XYZ D65:
 
