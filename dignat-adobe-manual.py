@@ -34,14 +34,14 @@ def cm2_to_camera_matrix(input):
     camnat_to_bt709 = np.linalg.inv(bt709_to_camnat)
     return np.matmul(bt709_to_xyz, camnat_to_bt709)
 
-color_matrix_txt = os.listdir("color-matrices")
+color_matrix_txt = os.listdir("adobe-matrices")
 
 cam_red_primaries = np.zeros((len(color_matrix_txt), 2))
 cam_grn_primaries = np.zeros((len(color_matrix_txt), 2))
 cam_blu_primaries = np.zeros((len(color_matrix_txt), 2))
 
 for i, file in enumerate(color_matrix_txt):
-    raw_matrix = np.loadtxt(f"color-matrices/{file}", delimiter=',')
+    raw_matrix = np.loadtxt(f"adobe-matrices/{file}", delimiter=',')
     cam_matrix = cm2_to_camera_matrix(raw_matrix)
     primaries, _ = colour.primaries_whitepoint(cam_matrix)
     cam_red_primaries[i] = primaries[0]
