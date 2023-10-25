@@ -5,7 +5,7 @@ An experimental set of primaries aiming for the ideal oxymoron of a camera-agnos
 Each primary is chosen from a dataset consisting of extrapolated virtual primaries from cameras with known matrices.
 
 ![](https://user-images.githubusercontent.com/66244111/277140183-9dae451c-0de9-46c7-b88e-b6be8da7a542.png)
-![](https://user-images.githubusercontent.com/66244111/277622033-df7af8aa-5a00-4c1f-891a-b76d8092d12d.png)
+![](https://user-images.githubusercontent.com/66244111/277839781-3b2a9a0d-723e-42ad-b3fb-b6d64663b5c5.png)
 
 This is very much brute-force. There's no rotational scaling or correction, and it relies on general similarity.
 
