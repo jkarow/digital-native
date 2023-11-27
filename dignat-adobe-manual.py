@@ -67,7 +67,7 @@ print(format_matrix_plaintext(dignat.matrix_XYZ_to_RGB, PRECISION))
 if DARK_PLOT:
     plt.style.use("dark_background")
 
-colour.plotting.plot_RGB_colourspaces_in_chromaticity_diagram_CIE1931(dignat, standalone = False)
+colour.plotting.plot_RGB_colourspaces_in_chromaticity_diagram_CIE1931(dignat, show = True)
 plt.scatter(cam_red_primaries[:, 0], cam_red_primaries[:, 1], color="red")
 plt.scatter(cam_grn_primaries[:, 0], cam_grn_primaries[:, 1], color="green")
 plt.scatter(cam_blu_primaries[:, 0], cam_blu_primaries[:, 1], color="blue")
