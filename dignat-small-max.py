@@ -123,7 +123,7 @@ def main():
 
     figure, axes = colour.plotting.plot_RGB_colourspaces_in_chromaticity_diagram_CIE1931(
         camera_spaces + [dignat] + PLOT_REF,
-        standalone = False
+        show = True
     )
     axes.legend(bbox_to_anchor=(1.02, 1.01))
     plt.title("Digital Native Comparison")
